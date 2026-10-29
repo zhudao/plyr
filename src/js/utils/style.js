@@ -107,7 +107,8 @@ export function setAspectRatio(input) {
 
   // For Vimeo we have an extra <div> to hide the standard controls and UI
   if (this.isVimeo && !this.config.vimeo.premium && this.supported.ui) {
-    const height = (100 / this.media.offsetWidth) * parseInt(window.getComputedStyle(this.media).paddingBottom, 10);
+    const height =
+      (100 / this.media.offsetWidth) * Number.parseInt(window.getComputedStyle(this.media).paddingBottom, 10);
     const offset = (height - padding) / (height / 50);
 
     if (this.fullscreen.active) {

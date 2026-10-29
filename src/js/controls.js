@@ -194,7 +194,7 @@ const controls = {
 
     // Set class name
     if (Object.keys(attributes).includes('class')) {
-      if (!attributes.class.split(' ').some((c) => c === this.config.classNames.control)) {
+      if (!attributes.class.split(' ').includes(this.config.classNames.control)) {
         extend(attributes, {
           class: `${attributes.class} ${this.config.classNames.control}`,
         });
@@ -366,7 +366,7 @@ const controls = {
       }[type];
       const suffix = suffixKey ? i18n.get(suffixKey, this.config) : '';
 
-      progress.innerText = `% ${suffix.toLowerCase()}`;
+      progress.textContent = `% ${suffix.toLowerCase()}`;
     }
 
     this.elements.display[type] = progress;
@@ -524,7 +524,7 @@ const controls = {
             break;
 
           case 'speed':
-            this.speed = parseFloat(value);
+            this.speed = Number.parseFloat(value);
             break;
 
           default:
@@ -562,8 +562,7 @@ const controls = {
       return;
     }
 
-    // eslint-disable-next-line no-param-reassign
-    target.innerText = controls.formatTime(time, inverted);
+    target.textContent = controls.formatTime(time, inverted);
   },
 
   // Update volume UI and storage
@@ -589,7 +588,6 @@ const controls = {
       return;
     }
 
-    // eslint-disable-next-line
     target.value = value;
 
     // Webkit range fill
@@ -712,9 +710,10 @@ const controls = {
     const clientRect = this.elements.progress.getBoundingClientRect();
 
     if (is.event(event)) {
-      percent = (100 / clientRect.width) * (event.pageX - clientRect.left);
+      const scrollLeft = event.pageX - event.clientX;
+      percent = (100 / clientRect.width) * (event.pageX - clientRect.left - scrollLeft);
     } else if (hasClass(tipElement, visible)) {
-      percent = parseFloat(tipElement.style.left, 10);
+      percent = Number.parseFloat(tipElement.style.left, 10);
     } else {
       return;
     }
@@ -729,7 +728,7 @@ const controls = {
     const time = (this.duration / 100) * percent;
 
     // Display the time a click would seek to
-    tipElement.innerText = controls.formatTime(time);
+    tipElement.textContent = controls.formatTime(time);
 
     // Get marker point for time
     const point = this.config.markers?.points?.find(({ time: t }) => t === Math.round(time));
@@ -1772,7 +1771,7 @@ const controls = {
           artwork: this.config.mediaMetadata.artwork,
         });
       }
-    } catch (_) {
+    } catch {
       // Do nothing
     }
   },

@@ -2,10 +2,16 @@
 // Project: https://plyr.io
 // Definitions by: ondratra <https://github.com/ondratra>
 // TypeScript Version: 3.0
+//
+// Plyr is deprecated and receives security updates only. Its creator now works
+// on Video.js 10, which combines Plyr, Vidstack and Media Chrome into one player. New projects should use
+// Video.js (https://videojs.org) and existing Plyr integrations can follow
+// the migration guide: https://videojs.org/docs/framework/html/guides/migrate-from-plyr
 
-export = Plyr;
-export as namespace Plyr;
-
+/**
+ * @deprecated Plyr receives security updates only. Use Video.js 10 for new projects (https://videojs.org).
+ * Migration guide: https://videojs.org/docs/framework/html/guides/migrate-from-plyr
+ */
 declare class Plyr {
   /**
    * Setup a new instance
@@ -565,7 +571,6 @@ declare namespace Plyr {
   interface FullScreenOptions {
     enabled?: boolean;
     fallback?: boolean | 'force';
-    allowAudio?: boolean;
     iosNative?: boolean;
     container?: string;
   }
@@ -584,6 +589,7 @@ declare namespace Plyr {
   interface PreviewThumbnailsOptions {
     enabled?: boolean;
     src?: string | string[];
+    withCredentials?: boolean;
   }
 
   interface MediaMetadataArtwork {
@@ -724,3 +730,6 @@ declare namespace Plyr {
     ui: boolean;
   }
 }
+
+export as namespace Plyr;
+export default Plyr;

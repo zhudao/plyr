@@ -6,7 +6,7 @@ import { clamp } from '../utils/numbers';
 import { formatTime } from '../utils/time';
 
 // Arg: vttDataString example: "WEBVTT\n\n1\n00:00:05.000 --> 00:00:10.000\n1080p-00001.jpg"
-const parseVtt = (vttDataString) => {
+function parseVtt(vttDataString) {
   const processedList = [];
   const frames = vttDataString.split(/\r\n\r\n|\n\n|\r\r/);
 
@@ -18,7 +18,7 @@ const parseVtt = (vttDataString) => {
       if (!is.number(result.startTime)) {
         // The line with start and end times on it is the first line of interest
         const matchTimes = line.match(
-          /([0-9]{2})?:?([0-9]{2}):([0-9]{2}).([0-9]{2,3})( ?--> ?)([0-9]{2})?:?([0-9]{2}):([0-9]{2}).([0-9]{2,3})/,
+          /(\d{2})?:?(\d{2}):(\d{2}).(\d{2,3})( ?--> ?)(\d{2})?:?(\d{2}):(\d{2}).(\d{2,3})/,
         ); // Note that this currently ignores caption formatting directives that are optionally on the end of this line - fine for non-captions VTT
 
         if (matchTimes) {
@@ -51,7 +51,7 @@ const parseVtt = (vttDataString) => {
   });
 
   return processedList;
-};
+}
 
 /**
  * Preview thumbnails for seek hover and scrubbing
@@ -64,7 +64,7 @@ const parseVtt = (vttDataString) => {
  * - This implementation uses multiple separate img elements. Other implementations use background-image on one element. This would be nice and simple, but Firefox and Safari have flickering issues with replacing backgrounds of larger images. It seems that YouTube perhaps only avoids this because they don't have the option for high-res previews (even the fullscreen ones, when mousedown/seeking). Images appear over the top of each other, and previous ones are discarded once the new ones have been rendered
  */
 
-const fitRatio = (ratio, outer) => {
+function fitRatio(ratio, outer) {
   const targetRatio = outer.width / outer.height;
   const result = {};
   if (ratio > targetRatio) {
@@ -76,7 +76,7 @@ const fitRatio = (ratio, outer) => {
   }
 
   return result;
-};
+}
 
 class PreviewThumbnails {
   /**
@@ -171,7 +171,7 @@ class PreviewThumbnails {
   // Process individual VTT file
   getThumbnail = (url) => {
     return new Promise((resolve) => {
-      fetch(url).then((response) => {
+      fetch(url, undefined, this.player.config.previewThumbnails.withCredentials).then((response) => {
         const thumbnail = {
           frames: parseVtt(response),
           height: null,
@@ -236,7 +236,7 @@ class PreviewThumbnails {
       this.mousePosX = event.pageX;
 
       // Set time text inside image container
-      this.elements.thumb.time.innerText = formatTime(this.seekTime);
+      this.elements.thumb.time.textContent = formatTime(this.seekTime);
 
       // Get marker point for time
       const point = this.player.config.markers?.points?.find(({ time: t }) => t === Math.round(this.seekTime));
@@ -469,7 +469,7 @@ class PreviewThumbnails {
       if (image.dataset.index !== currentImage.dataset.index && !image.dataset.deleting) {
         // Wait 200ms, as the new image can take some time to show on certain browsers (even though it was downloaded before showing). This will prevent flicker, and show some generosity towards slower clients
         // First set attribute 'deleting' to prevent multi-handling of this on repeat firing of this function
-        // eslint-disable-next-line no-param-reassign
+
         image.dataset.deleting = true;
 
         // This has to be set before the timeout - to prevent issues switching between hover and scrub
@@ -683,13 +683,12 @@ class PreviewThumbnails {
     // Find difference between height and preview container height
     const multiplier = this.thumbContainerHeight / frame.h;
 
-    // eslint-disable-next-line no-param-reassign
     previewImage.style.height = `${previewImage.naturalHeight * multiplier}px`;
-    // eslint-disable-next-line no-param-reassign
+
     previewImage.style.width = `${previewImage.naturalWidth * multiplier}px`;
-    // eslint-disable-next-line no-param-reassign
+
     previewImage.style.left = `-${frame.x * multiplier}px`;
-    // eslint-disable-next-line no-param-reassign
+
     previewImage.style.top = `-${frame.y * multiplier}px`;
   };
 }

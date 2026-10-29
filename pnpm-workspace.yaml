@@ -1,0 +1,24 @@
+packages:
+  - site
+
+# The site keeps its own lockfile in site/pnpm-lock.yaml. release-please can only ignore whole directories
+# (see exclude-paths in .github/release-please/release-please-config.json), so site dependency changes must not
+# touch the root pnpm-lock.yaml or they would count as player changes in the changelog and version bump.
+sharedWorkspaceLockfile: false
+
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+
+# Vite+ uses its own version for the Vite-compatible package.
+minimumReleaseAgeExclude:
+  - autoprefixer@10.6.1
+
+peerDependencyRules:
+  allowedVersions:
+    vite: '0.3.2 || 1.3.0'
+
+# Newer cssnano plugins rewrite selector lists with `:is()`, which would change dist/plyr.css from the published builds.
+overrides:
+  postcss-merge-rules: 7.0.6
+  postcss-minify-selectors: 7.0.5

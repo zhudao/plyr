@@ -23,16 +23,10 @@ export const transitionEndEvent = (() => {
 export function repaint(element, delay) {
   setTimeout(() => {
     try {
-      // eslint-disable-next-line no-param-reassign
       element.hidden = true;
-
       // eslint-disable-next-line no-unused-expressions
       element.offsetHeight;
-
-      // eslint-disable-next-line no-param-reassign
       element.hidden = false;
-    } catch (_) {
-      // Do nothing
-    }
+    } catch {}
   }, delay);
 }

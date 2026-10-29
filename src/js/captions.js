@@ -86,14 +86,19 @@ const captions = {
 
     const browserLanguages = navigator.languages || [navigator.language || navigator.userLanguage || 'en'];
     const languages = dedupe(browserLanguages.map((language) => language.split('-')[0]));
-    let language = (this.storage.get('language') || this.config.captions.language || 'auto').toLowerCase();
+    let language = (
+      this.storage.get('language') ||
+      this.captions.language ||
+      this.config.captions.language ||
+      'auto'
+    ).toLowerCase();
 
     // Use first browser language when language is 'auto'
     if (language === 'auto') {
       [language] = languages;
     }
 
-    let active = this.storage.get('captions');
+    let active = this.storage.get('captions') || this.captions.active;
     if (!is.boolean(active)) {
       ({ active } = this.config.captions);
     }
@@ -120,7 +125,7 @@ const captions = {
     const tracks = captions.getTracks.call(this, true);
     // Get the wanted language
     const { active, language, meta, currentTrackNode } = this.captions;
-    const languageExists = Boolean(tracks.find((track) => track.language === language));
+    const languageExists = Boolean(tracks.find((track) => (track.language || '').toLowerCase() === language));
 
     // Handle tracks (add event listener and "pseudo"-default)
     if (this.isHTML5 && this.isVideo) {
@@ -137,9 +142,8 @@ const captions = {
           // Turn off native caption rendering to avoid double captions
           // Note: mode='hidden' forces a track to download. To ensure every track
           // isn't downloaded at once, only 'showing' tracks should be reassigned
-          // eslint-disable-next-line no-param-reassign
+
           if (track.mode === 'showing') {
-            // eslint-disable-next-line no-param-reassign
             track.mode = 'hidden';
           }
 
@@ -270,7 +274,9 @@ const captions = {
 
       // Handle Vimeo captions
       if (this.isVimeo) {
-        this.embed.enableTextTrack(language);
+        // Enable text track but don't render captions within the player
+        // Since we handle that ourselves
+        this.embed.enableTextTrack(language, null, false);
       }
 
       // Trigger event
@@ -299,7 +305,17 @@ const captions = {
 
     // Set currentTrack
     const tracks = captions.getTracks.call(this);
-    const track = captions.findTrack.call(this, [language]);
+    // Keep the currently selected track if it still matches the requested
+    // language. This lets users switch between (and stay on) multiple tracks
+    // that share a language — something findTrack alone can't express, as it
+    // always returns the first match for a language.
+    let track = tracks[this.captions.currentTrack];
+    if (track && (track.language || '').toLowerCase() !== language) {
+      track = undefined;
+    }
+    if (!track) {
+      track = captions.findTrack.call(this, [language]);
+    }
     captions.set.call(this, tracks.indexOf(track), passive);
   },
 
@@ -324,7 +340,7 @@ const captions = {
     let track;
 
     languages.every((language) => {
-      track = sorted.find((t) => t.language === language);
+      track = sorted.find((t) => (t.language || '').toLowerCase() === (language || '').toLowerCase());
       return !track; // Break iteration if there is a match
     });
 

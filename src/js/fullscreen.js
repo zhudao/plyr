@@ -137,7 +137,7 @@ class Fullscreen {
   get target() {
     return browser.isIos && this.player.config.fullscreen.iosNative
       ? this.player.media
-      : this.player.elements.fullscreen ?? this.player.elements.container;
+      : (this.player.elements.fullscreen ?? this.player.elements.container);
   }
 
   onChange = () => {

@@ -15,7 +15,7 @@ import { silencePromise } from '../utils/promise';
 import { formatTime } from '../utils/time';
 import { buildUrlParams } from '../utils/urls';
 
-const destroy = (instance) => {
+function destroy(instance) {
   // Destroy our adsManager
   if (instance.manager) {
     instance.manager.destroy();
@@ -27,12 +27,12 @@ const destroy = (instance) => {
   }
 
   instance.elements.container.remove();
-};
+}
 
 class Ads {
   /**
    * Ads constructor.
-   * @param {Object} player
+   * @param {object} player
    * @return {Ads}
    */
   constructor(player) {
@@ -220,7 +220,7 @@ class Ads {
 
   /**
    * Update the ad countdown
-   * @param {Boolean} start
+   * @param {boolean} start
    */
   pollCountdown = (start = false) => {
     if (!start) {
@@ -580,7 +580,7 @@ class Ads {
 
   /**
    * Handles callbacks after an ad event was invoked
-   * @param {String} event - Event type
+   * @param {string} event - Event type
    * @param args
    */
   trigger = (event, ...args) => {
@@ -597,7 +597,7 @@ class Ads {
 
   /**
    * Add event listeners
-   * @param {String} event - Event type
+   * @param {string} event - Event type
    * @param {Function} callback - Callback for when event occurs
    * @return {Ads}
    */
@@ -616,8 +616,8 @@ class Ads {
    * The advertisement has 12 seconds to get its things together. We stop this timer when the
    * advertisement is playing, or when a user action is required to start, then we clear the
    * timer on ad ready
-   * @param {Number} time
-   * @param {String} from
+   * @param {number} time
+   * @param {string} from
    */
   startSafetyTimer = (time, from) => {
     this.player.debug.log(`Safety timer invoked from: ${from}`);
@@ -630,7 +630,7 @@ class Ads {
 
   /**
    * Clear our safety timer(s)
-   * @param {String} from
+   * @param {string} from
    */
   clearSafetyTimer = (from) => {
     if (!is.nullOrUndefined(this.safetyTimer)) {

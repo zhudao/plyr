@@ -20,7 +20,8 @@ function parseId(url) {
   }
 
   const regex = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  return url.match(regex) ? RegExp.$2 : url;
+  const match = url.match(regex);
+  return match && match[2] ? match[2] : url;
 }
 
 // Set playback state and trigger change (only on actual change)

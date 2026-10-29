@@ -1,12 +1,7 @@
 {
   "cdn": {
+    "type": "r2",
     "bucket": "plyr",
-    "domain": "cdn.plyr.io",
-    "region": "us-east-1"
-  },
-  "demo": {
-    "bucket": "plyr.io",
-    "domain": "plyr.io",
-    "region": "us-west-1"
+    "domain": "cdn.plyr.io"
   }
 }

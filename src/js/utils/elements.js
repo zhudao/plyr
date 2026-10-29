@@ -58,7 +58,7 @@ export function createElement(type, attributes, text) {
 
   // Add text node
   if (is.string(text)) {
-    element.innerText = text;
+    element.textContent = text;
   }
 
   // Return built element
@@ -177,7 +177,6 @@ export function toggleHidden(element, hidden) {
     hide = !element.hidden;
   }
 
-  // eslint-disable-next-line no-param-reassign
   element.hidden = hide;
 }
 
